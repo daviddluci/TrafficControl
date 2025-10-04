@@ -2,14 +2,27 @@
 
 require 'gosu'
 require_relative 'constants/traffic_light_constants'
+require_relative 'utilities'
 
 # doc
 class TrafficLight
+  include TrafficLightConstants
+  include Utilities
+
   attr_reader :type, :current_state, :positions
 
+  def self.load_traffic_lights
+    {
+      'N' => TrafficLight.new('N'),
+      'S' => TrafficLight.new('S'),
+      'E' => TrafficLight.new('E'),
+      'W' => TrafficLight.new('W')
+    }
+  end
+
   def initialize(origin = 'N')
-    @traffic_light_states_images = TrafficLightConstants::IMAGES.transform_values { |v| Gosu::Image.new(v) }
-    @positions = TrafficLightConstants::LIGHT_POSITIONS[origin]
+    @traffic_light_states_images = IMAGES.transform_values { |v| Gosu::Image.new(v) }
+    @positions = LIGHT_POSITIONS[origin]
     @type = origin
 
     @original_state = :red
@@ -56,7 +69,7 @@ class TrafficLight
   end
 
   def ready_for_next_light?
-    [time_elapsed_between_light_switches, time_elapsed_between_blinks].min > TrafficLightConstants::STATE_DURATION
+    [time_elapsed_between_light_switches, time_elapsed_between_blinks].min > SWITCH_DURATION
   end
 
   def next_light_state
@@ -69,28 +82,24 @@ class TrafficLight
   end
 
   def blinking?
-    @blink_count < TrafficLightConstants::MAX_BLINK_COUNT
+    @blink_count < MAX_BLINK_COUNT
   end
 
   def ready_to_blink?
-    time_elapsed_between_blinks > TrafficLightConstants::BLINK_INTERVAL
+    time_elapsed_between_blinks > BLINK_DURATION
   end
 
   def image_draw_parameters
     [
       @positions[:x],
       @positions[:y],
-      TrafficLightConstants::Z_ORDER,
+      Z_ORDER,
       @positions[:angle],
-      TrafficLightConstants::CENTER_X,
-      TrafficLightConstants::CENTER_Y,
-      TrafficLightConstants::SCALE_X_Y,
-      TrafficLightConstants::SCALE_X_Y
+      CENTER_X,
+      CENTER_Y,
+      SCALE_X_Y,
+      SCALE_X_Y
     ]
-  end
-
-  def current_time
-    Gosu.milliseconds
   end
 
   def time_elapsed_between_blinks
