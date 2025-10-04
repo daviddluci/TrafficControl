@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module CarConstants
-  COLLISION_DISTANCE = 30
+  COLLISION_DISTANCE_TRAFFIC_LIGHT = 45
+  COLLISION_DISTANCE_CAR = 65
 
   Z_ORDER = 1.0
   CENTER_X = 0.5
