@@ -10,7 +10,7 @@ class Car
   include CarConstants
   include Utilities
 
-  attr_reader :type, :x, :y, :in_use
+  attr_reader :type, :x, :y, :in_use, :entered_at
   attr_accessor :stopped
 
   def initialize(origin = 'N')
@@ -46,8 +46,8 @@ class Car
     return unless @in_use && !@stopped
 
     dx, dy = MOVE_DIRECTIONS[@angle]
-    @x += dx
-    @y += dy
+    @x += dx * BASE_CAR_SPEED
+    @y += dy * BASE_CAR_SPEED
   end
 
   def draw
@@ -65,8 +65,6 @@ class Car
 
     true
   end
-
-  private
 
   def car_in_front?(other_car)
     collides_with?(other_car.x, other_car.y, COLLISION_DISTANCE_CAR)
