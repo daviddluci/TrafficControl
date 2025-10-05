@@ -81,11 +81,26 @@ class GameLogic
 
   def spawn_car
     dir = CarConstants::SPAWN_POSITIONS.keys.sample
-    car = @car_lines[dir].find { |c| !c.in_use }
-    return if car.nil? || current_time - @spawn_log[car.type] < DELAY_BETWEEN_CAR_SPAWNS
+    car = find_spawnable_car(dir)
+    return unless car && !car.in_use && (current_time - @spawn_log[car.type] >= DELAY_BETWEEN_CAR_SPAWNS)
 
-    @spawn_log[car.type] = current_time
+    @spawn_log[dir] = current_time
     car.reset
+  end
+
+  def find_spawnable_car(direction)
+    cars = @car_lines[direction]
+    return cars.first unless cars.first.in_use
+
+    (cars.size - 1).downto(1) do |i|
+      return cars[i] if !cars[i].in_use && cars[i - 1].in_use
+    end
+
+    nil
+  end
+
+  def update_score
+    @score = current_time / 1000
   end
 
   def active_car_count
