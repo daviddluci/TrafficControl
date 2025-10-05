@@ -3,6 +3,9 @@
 
 A 2D traffic intersection simulation built in Ruby with Gosu.
 
+![Adobe Express - traffic-control-preview](https://github.com/user-attachments/assets/2076b91a-9648-4251-8ca8-fc6c495e16a8)
+
+
 ## ✨ Features
 
 - Realistic Traffic Simulation: Cars move according to traffic lights and follow cars in front of them.
