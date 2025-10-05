@@ -45,6 +45,7 @@ class TrafficLight
   end
 
   private
+
   def update_light_state
     return handle_blinking if blinking? && @original_state == :green
 
