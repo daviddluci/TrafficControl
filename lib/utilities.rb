@@ -3,7 +3,6 @@
 require 'gosu'
 
 module Utilities
-
   def collides_with?(x, y, collision_distance)
     distance = Math.sqrt((@x - x)**2 +
                          (@y - y)**2)
