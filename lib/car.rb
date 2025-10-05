@@ -54,6 +54,14 @@ class Car
     @image.draw_rot(*image_draw_parameters)
   end
 
+  def update_stopped_and_move!(light, car_in_front)
+    @stopped = !can_move?(light, car_in_front)
+    move unless @stopped
+    update_in_use_status!
+  end
+
+  private
+
   def update_in_use_status!
     @in_use = within_window_bounds?
   end

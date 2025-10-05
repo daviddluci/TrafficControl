@@ -38,15 +38,18 @@ class GameLogic
   def update_and_move_cars
     @car_lines.each do |origin, cars|
       light = @traffic_lights[origin]
-      active_cars = cars.select(&:in_use)
+      active_cars = cars.select(&:in_use).sort_by(&:entered_at)
 
       active_cars.each_with_index do |car, index|
-
         car_in_front = index.positive? ? active_cars[index - 1] : nil
-        car.stopped = !car.can_move?(light, car_in_front)
-        car.move unless car.stopped
-        car.update_in_use_status!
+        car.update_stopped_and_move!(light, car_in_front)
       end
+    end
+  end
+
+  def too_many_halted_cars?
+    @car_lines.values.any? do |line|
+      line.count { |car| car.in_use && car.stopped } >= MAX_CAR_COUNT / CarConstants::SPAWN_POSITIONS.keys.size
     end
   end
 
