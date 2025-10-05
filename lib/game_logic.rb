@@ -11,22 +11,30 @@ class GameLogic
   include GameLogicConstants
   include Utilities
 
-  attr_reader :car_lines, :traffic_lights, :background, :game_over
+  attr_reader :car_lines, :traffic_lights, :background, :score, :game_over, :game_over_type, :game_won
 
   def initialize
     @background = Gosu::Image.new(WindowConstants::WINDOW_BACKGROUND_IMAGE)
     @car_lines = Car.load_cars
     @spawn_log = CarConstants::SPAWN_POSITIONS.keys.map { |dir| [dir, 0] }.to_h
     @traffic_lights = TrafficLight.load_traffic_lights
+    @score = 0
     @game_over = false
+    @game_won = false
+    @game_over_type = 0
   end
 
   def update
-    return if @game_over
+    return if @game_over || @game_won
 
     update_and_move_cars
     check_collisions
     spawn_car if should_car_be_spawned?
+
+    @game_over ||= too_many_halted_cars?
+    @game_won = @score > SCORE_TO_WIN
+
+    update_score
   end
 
   def toggle_light(origin)
@@ -59,13 +67,13 @@ class GameLogic
 
   def check_collisions
     @car_lines.values.combination(2).each do |car_line1, car_line2|
-
       car_line1.select(&:in_use).each do |car1|
         car_line2.select(&:in_use).each do |car2|
-          if car1.collides_with?(car2.x, car2.y, CarConstants::COLLISION_DISTANCE_TRAFFIC_LIGHT)
-            @game_over = true
-            puts 'collision'
-          end
+          next unless car1.collides_with?(car2.x, car2.y, CarConstants::COLLISION_DISTANCE_TRAFFIC_LIGHT)
+
+          @game_over = true
+          @game_over_type = 1
+          return
         end
       end
     end
